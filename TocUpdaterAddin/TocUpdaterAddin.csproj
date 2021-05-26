@@ -10,6 +10,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Icon.png" />
+    <None Remove="Assets\Icon.svg" />
+    <None Remove="Assets\Icon_22_Dark.png" />
+    <None Remove="Assets\Icon_22_Light.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
@@ -37,7 +44,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="icon.png" />
+    <Resource Include="Assets\Icon.png" />
+    <Resource Include="Assets\Icon_22_Dark.png" />
+    <Resource Include="Assets\Icon_22_Light.png" />
+    <!--<Resource Include="icon.png" />-->
   </ItemGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net472'">

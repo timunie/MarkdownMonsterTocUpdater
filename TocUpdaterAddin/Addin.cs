@@ -3,14 +3,13 @@ using MarkdownMonster;
 using MarkdownMonster.AddIns;
 using MarkdownMonster.Windows.DocumentOutlineSidebar;
 using System;
-using System.Globalization;
 using System.Linq;
 using System.Windows;
+using System.Windows.Media.Imaging;
 using Westwind.Utilities;
 
 namespace TocUpdaterAddin
 {
-
     /// <summary>
     /// @@@ TocUpdaterAddin @@@
     ///
@@ -34,7 +33,7 @@ namespace TocUpdaterAddin
         /// </summary>
         /// <remarks>
         /// You do not have access to the Model or UI from this overload.
-        /// </remarks>  
+        /// </remarks>
         public override void OnApplicationStart()
         {
             base.OnApplicationStart();
@@ -46,22 +45,41 @@ namespace TocUpdaterAddin
             // REMOVE 'Addin' from the Name
             Name = "TOC Updater";
 
-
             // by passing in the add in you automatically
             // hook up OnExecute/OnExecuteConfiguration/OnCanExecute
             var menuItem = new AddInMenuItem(this)
             {
-                Caption = "Update my TOC",
-                
+                Caption = Name,
+
                 // if an icon is specified it shows on the toolbar
                 // if not the add-in only shows in the add-ins menu
                 FontawesomeIcon = FontAwesomeIcon.Magic
             };
 
+            try
+            {
+                // We want a different icon based on the user selected theme
+                var theme = Application.Current.Resources["Theme.BaseColorScheme"] as string;
+                var iconFile = theme == "Dark" ? "Icon_22_Dark" : "Icon_22_Light";
+
+                var icon = new BitmapImage();
+                icon.BeginInit();
+                icon.UriSource = new Uri($"pack://application:,,,/TocUpdaterAddin;component/Assets/{iconFile}.png", UriKind.RelativeOrAbsolute);
+                icon.CacheOption = BitmapCacheOption.OnLoad;
+                icon.EndInit();
+                icon.Freeze();
+
+                menuItem.IconImageSource = icon;
+            }
+            catch
+            {
+                // We did not recieve the icon. We will get the fallback value automatically, so no need to react here.
+            }
+
             // if you don't want to display config or main menu item clear handler
             //menuItem.ExecuteConfiguration = null;
 
-            // Must add the menu to the collection to display menu and toolbar items            
+            // Must add the menu to the collection to display menu and toolbar items
             MenuItems.Add(menuItem);
         }
 
@@ -72,7 +90,6 @@ namespace TocUpdaterAddin
         /// <param name="model">The Markdown Monster Application model</param>
         public override void OnModelLoaded(AppModel model)
         { }
-
 
         /// <summary>
         /// Fired after the Markdown Monster UI becomes available
@@ -85,7 +102,6 @@ namespace TocUpdaterAddin
         {
             OutlineModel = new DocumentOutlineModel();
         }
-
 
         /// <summary>
         /// Fired when you click the addin button in the toolbar.
@@ -103,20 +119,15 @@ namespace TocUpdaterAddin
             }
         }
 
-
         /// <summary>
         /// Fired when you click on the configuration button in the addin
         /// </summary>
         /// <param name="sender">The Execute toolbar button for this addin</param>
         public override void OnExecuteConfiguration(object sender)
         {
-            Configuration.RefreshTocBeforeSave =
-                MessageBox.Show("Should the Document Outline be refreshed if you save the document?",
-                            "TOC Updater",
-                            MessageBoxButton.YesNo, MessageBoxImage.Question)
-                            == MessageBoxResult.Yes;
+            var dialog = new AddinSettings();
+            dialog.ShowDialog();
         }
-
 
         /// <summary>
         /// Determines on whether the addin can be executed
@@ -129,7 +140,6 @@ namespace TocUpdaterAddin
             return ActiveDocument.CurrentText.Contains(STR_StartDocumentOutline);
         }
 
-
         public override bool OnBeforeSaveDocument(MarkdownDocument doc)
         {
             if (Configuration.RefreshTocBeforeSave)
@@ -139,10 +149,8 @@ namespace TocUpdaterAddin
             return base.OnBeforeSaveDocument(doc);
         }
 
-
         private void RefreshDocumentOutline()
         {
-
             var oldSelection = ActiveEditor.GetSelectionRange();
             var oldScrollPosition = ActiveEditor.GetScrollPosition();
 
@@ -170,14 +178,14 @@ namespace TocUpdaterAddin
             }
 
             var newToc = STR_StartDocumentOutline
-                        + Environment.NewLine 
+                        + Environment.NewLine
                         + Environment.NewLine
                         + OutlineModel.CreateMarkdownOutline(ActiveDocument, tocPosition).TrimEnd()
                         + Environment.NewLine
                         + Environment.NewLine
                         + STR_EndDocumentOutline;
 
-            // We don't want to disturb the user more than needed. 
+            // We don't want to disturb the user more than needed.
             // So let's check if we really have to replace the TOC.
 
             if (!SelectiveStringComparer.Equals(oldToc, newToc))

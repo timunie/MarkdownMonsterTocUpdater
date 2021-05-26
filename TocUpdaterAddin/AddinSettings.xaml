@@ -1,0 +1,19 @@
+﻿<mah:MetroWindow x:Class="TocUpdaterAddin.AddinSettings"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:local="clr-namespace:TocUpdaterAddin"
+                 xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 Title="TOC Updater Settings"
+                 DataContext="{x:Static local:TocUpdaterAddinConfiguration.Current}"
+                 SizeToContent="WidthAndHeight"
+                 ResizeMode="NoResize"
+                 mc:Ignorable="d">
+    <StackPanel>
+        <mah:ToggleSwitch Margin="5"
+                          Header="Update the document outline on every save"
+                          IsOn="{Binding RefreshTocBeforeSave}" />
+        <Button Content="Close" Click="CloseSettings_Click" Margin="5" />
+    </StackPanel>
+</mah:MetroWindow>

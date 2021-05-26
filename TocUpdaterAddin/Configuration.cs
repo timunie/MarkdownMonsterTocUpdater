@@ -13,9 +13,15 @@ namespace TocUpdaterAddin
         }
 
         // Add properties for any configuration setting you want to persist and reload
-        // you can access this object as 
+        // you can access this object as
         //     TocUpdaterAddinConfiguration.Current.PropertyName
 
-        public bool RefreshTocBeforeSave { get; set; } = true;
+        private bool _RefreshTocBeforeSave;
+
+        public bool RefreshTocBeforeSave
+        {
+            get { return _RefreshTocBeforeSave; }
+            set { _RefreshTocBeforeSave = value; OnPropertyChanged(nameof(RefreshTocBeforeSave)); }
+        }
     }
 }

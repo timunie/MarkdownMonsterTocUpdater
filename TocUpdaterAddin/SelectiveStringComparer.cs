@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TocUpdaterAddin
 {
     /// <summary>
     ///  A custom string comparerer that ignores certain chars.
     ///  This is useful when <code>\r\n</code> should be ignored
-    ///  
+    ///
     ///  <para />
-    ///  
+    ///
     ///   See: https://stackoverflow.com/questions/3423018/how-to-not-include-line-breaks-when-comparing-two-strings/41408399#41408399
     /// </summary>
 
